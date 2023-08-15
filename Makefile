@@ -15,6 +15,8 @@ CUDA_112_PREFIX := $(REGISTRY_REPO):cuda-11.2-
 CUDA_113_PREFIX := $(REGISTRY_REPO):cuda-11.3-
 CUDA_118_PREFIX := $(REGISTRY_REPO):cuda-11.8-
 ROCM_50_PREFIX := $(REGISTRY_REPO):rocm-5.0-
+ROCM_54_PREFIX := $(REGISTRY_REPO):rocm-5.4-
+ROCM_55_PREFIX := $(REGISTRY_REPO):rocm-5.5-
 
 CPU_SUFFIX := -cpu
 GPU_SUFFIX := -gpu
@@ -169,6 +171,31 @@ build-pytorch10-tf27-rocm50:
 		-t $(DOCKERHUB_REGISTRY)/$(ROCM50_TORCH_TF_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
 		-t $(DOCKERHUB_REGISTRY)/$(ROCM50_TORCH_TF_ENVIRONMENT_NAME)-$(VERSION) \
 		.
+
+export ROCM54_TORCH_TF_ENVIRONMENT_NAME := $(ROCM_54_PREFIX)pytorch-1.10-tf-2.10-rocm
+
+.PHONY: build-pytorch10-tf210-rocm54
+build-pytorch10-tf210-rocm54:
+	docker build -f Dockerfile-default-rocm \
+                --build-arg BASE_IMAGE="rocm/pytorch:rocm5.4.3_ubuntu20.04_py3.8_pytorch_1.10.1" \
+                --build-arg TENSORFLOW_PIP="tensorflow-rocm==2.10.1.540" \
+                --build-arg HOROVOD_PIP="horovod==0.28.0" \
+                -t $(DOCKERHUB_REGISTRY)/$(ROCM54_TORCH_TF_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
+                -t $(DOCKERHUB_REGISTRY)/$(ROCM54_TORCH_TF_ENVIRONMENT_NAME)-$(VERSION) \
+                .
+
+export ROCM55_TORCH_TF_ENVIRONMENT_NAME := $(ROCM_55_PREFIX)pytorch-1.11-tf-2.10-rocm
+
+.PHONY: build-pytorch11-tf210-rocm55
+build-pytorch11-tf210-rocm55:
+	docker build -f Dockerfile-default-rocm \
+                --build-arg BASE_IMAGE="rocm/pytorch:rocm5.5_ubuntu20.04_py3.8_pytorch_1.11.0" \
+                --build-arg TENSORFLOW_PIP="tensorflow-rocm==2.10.1.540" \
+                --build-arg HOROVOD_PIP="horovod==0.28.0" \
+                -t $(DOCKERHUB_REGISTRY)/$(ROCM55_TORCH_TF_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
+                -t $(DOCKERHUB_REGISTRY)/$(ROCM55_TORCH_TF_ENVIRONMENT_NAME)-$(VERSION) \
+                .
+
 
 DEEPSPEED_VERSION := 0.8.3
 export GPU_DEEPSPEED_ENVIRONMENT_NAME := $(CUDA_113_PREFIX)pytorch-1.10-deepspeed-$(DEEPSPEED_VERSION)$(GPU_SUFFIX)
